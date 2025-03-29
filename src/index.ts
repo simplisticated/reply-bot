@@ -1,11 +1,16 @@
 import { Telegraf } from "telegraf";
 import { Message } from "telegraf/typings/core/types/typegram";
 import ENV from "./env";
+import { getUserDescription } from "./user";
 
 const REPLY_CACHE: {
     sourceMessage: Message;
     replyIdentifier: number;
 }[] = [];
+
+const COMMANDS = {
+    userInformation: "!",
+};
 
 function addReplyIdentifierToCache(
     replyIdentifier: number,
@@ -52,10 +57,27 @@ async function start(): Promise<Telegraf> {
 
             try {
                 if ("text" in messageFromSender) {
-                    await context.telegram.sendMessage(
-                        sourceMessage.from.id,
-                        messageFromSender.text
-                    );
+                    if (messageFromSender.text === COMMANDS.userInformation) {
+                        if (!sourceMessage.from) return;
+                        const userDescription = getUserDescription(
+                            sourceMessage.from
+                        );
+                        const json = JSON.stringify(
+                            sourceMessage.from,
+                            undefined,
+                            2
+                        );
+                        const text = `${userDescription}\n${json}`;
+                        await context.reply(text, {
+                            reply_to_message_id:
+                                messageFromSender.reply_to_message?.message_id,
+                        });
+                    } else {
+                        await context.telegram.sendMessage(
+                            sourceMessage.from.id,
+                            messageFromSender.text
+                        );
+                    }
                 } else if ("photo" in messageFromSender) {
                     const photo = messageFromSender.photo[0];
                     if (!photo) return;
