@@ -53,8 +53,8 @@ environment, depending on your deployment method.
 Here are the essential environment variables and their purposes:
 
 -   `TELEGRAM_TOKEN`: Defines the token that is used for Telegram bot.
--   `ADMINISTRATOR_IDENTIFIERS`: Telegram identifiers of the users who receive
-    messages.
+-   `ADMINISTRATOR_IDENTIFIERS`: An array of Telegram user identifiers that
+    receive forwarded messages from the bot and can respond to users.
 
 You should create a `.env` file in the root of your project and define these
 variables with their respective values.
@@ -63,6 +63,7 @@ Here is an example `.env` file:
 
 ```
 TELEGRAM_TOKEN=1234567890
+ADMINISTRATOR_IDENTIFIERS=1234567890,1234567890,1234567890,1234567890
 ```
 
 ## Scripts
