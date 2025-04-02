@@ -13,20 +13,32 @@ export async function handleMessages(
     next: () => Promise<void>
 ) {
     const { from: sender, message: messageFromSender } = context;
-    if (!sender || !messageFromSender) return;
+    if (!sender || !messageFromSender) {
+        next();
+        return;
+    }
 
     const isAdministrator = ENV.ADMINISTRATOR_IDENTIFIERS.includes(sender.id);
 
     if (isAdministrator) {
-        if (!("reply_to_message" in messageFromSender)) return;
+        if (!("reply_to_message" in messageFromSender)) {
+            next();
+            return;
+        }
 
         const replyMessage = messageFromSender.reply_to_message;
-        if (!replyMessage || !replyMessage.from) return;
+        if (!replyMessage || !replyMessage.from) {
+            next();
+            return;
+        }
 
         const sourceMessage = getSourceMessageFromReplyIdentifier(
             replyMessage.message_id
         );
-        if (!sourceMessage || !sourceMessage.from) return;
+        if (!sourceMessage || !sourceMessage.from) {
+            next();
+            return;
+        }
 
         try {
             if ("text" in messageFromSender) {
@@ -34,7 +46,10 @@ export async function handleMessages(
                     messageFromSender.text ===
                     AdministratorCommand.userInformation
                 ) {
-                    if (!sourceMessage.from) return;
+                    if (!sourceMessage.from) {
+                        next();
+                        return;
+                    }
                     const userDescription = getUserDescription(
                         sourceMessage.from
                     );
@@ -56,7 +71,10 @@ export async function handleMessages(
                 }
             } else if ("photo" in messageFromSender) {
                 const photo = messageFromSender.photo[0];
-                if (!photo) return;
+                if (!photo) {
+                    next();
+                    return;
+                }
 
                 const photoUrl = await context.telegram.getFileLink(photo);
                 await context.telegram.sendPhoto(sourceMessage.from.id, {
