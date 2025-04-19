@@ -18,6 +18,7 @@ function getAdministratorIdentifiers(): number[] {
 const ENV = {
     TELEGRAM_TOKEN: env.TELEGRAM_TOKEN,
     ADMINISTRATOR_IDENTIFIERS: getAdministratorIdentifiers(),
+    START_MESSAGE: env.START_MESSAGE,
 };
 
 export default ENV;
