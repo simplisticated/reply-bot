@@ -90,10 +90,9 @@ export async function handleMessages(
                     url: photoUrl.href,
                 });
             }
-
-            await context.react("🎉");
         } catch (error) {
             console.error(error);
+            await context.reply(`Error: ${error}`);
         }
     } else {
         ENV.ADMINISTRATOR_IDENTIFIERS.forEach(async id => {
