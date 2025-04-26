@@ -58,10 +58,19 @@ export async function handleMessages(
                         undefined,
                         2
                     );
+
+                    const replyToMessageIdentifier =
+                        messageFromSender.reply_to_message?.message_id;
+                    if (!replyToMessageIdentifier) {
+                        next();
+                        return;
+                    }
+
                     const text = `${userDescription}\n${json}`;
                     await context.reply(text, {
-                        reply_to_message_id:
-                            messageFromSender.reply_to_message?.message_id,
+                        reply_parameters: {
+                            message_id: replyToMessageIdentifier,
+                        },
                     });
                 } else {
                     await context.telegram.sendMessage(
@@ -81,6 +90,8 @@ export async function handleMessages(
                     url: photoUrl.href,
                 });
             }
+
+            await context.react("🎉");
         } catch (error) {
             console.error(error);
         }
